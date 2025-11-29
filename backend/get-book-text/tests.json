@@ -1,0 +1,35 @@
+{
+  "tests": [
+    {
+      "name": "Get book text by ID",
+      "method": "GET",
+      "path": "/?book_id=4",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "book_id": 4,
+        "title": "Евгений Онегин"
+      },
+      "bodyMatcher": "partial"
+    },
+    {
+      "name": "Missing book_id parameter",
+      "method": "GET",
+      "path": "/",
+      "expectedStatus": 400,
+      "expectedBody": {
+        "error": "book_id parameter is required"
+      },
+      "bodyMatcher": "partial"
+    },
+    {
+      "name": "Book not found",
+      "method": "GET",
+      "path": "/?book_id=99999",
+      "expectedStatus": 404,
+      "expectedBody": {
+        "error": "Book text not found"
+      },
+      "bodyMatcher": "partial"
+    }
+  ]
+}

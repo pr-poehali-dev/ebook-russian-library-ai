@@ -1443,6 +1443,8 @@ const Index = () => {
   const [quizBook, setQuizBook] = useState<Book | null>(null);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [showResult, setShowResult] = useState(false);
+  const [bookText, setBookText] = useState<string | null>(null);
+  const [loadingText, setLoadingText] = useState(false);
 
   const filteredBooks = sampleBooks.filter((book) => {
     const matchesSearch =
@@ -1480,6 +1482,27 @@ const Index = () => {
     setQuizBook(null);
     setSelectedAnswer(null);
     setShowResult(false);
+  };
+
+  const fetchBookText = async (bookId: number) => {
+    setLoadingText(true);
+    setBookText(null);
+    
+    const response = await fetch(`https://functions.poehali.dev/f7dcf624-9010-409a-9684-d8cb7255b0d5?book_id=${bookId}`);
+    
+    if (response.ok) {
+      const data = await response.json();
+      setBookText(data.full_text);
+    } else {
+      setBookText('Текст произведения пока не добавлен в библиотеку.');
+    }
+    
+    setLoadingText(false);
+  };
+
+  const handleReadBook = (book: Book) => {
+    setSelectedBook(book);
+    fetchBookText(book.id);
   };
 
   return (
@@ -1562,7 +1585,7 @@ const Index = () => {
                     <p className="text-sm text-muted-foreground mb-4">{book.description}</p>
                     <Button
                       className="w-full"
-                      onClick={() => setSelectedBook(book)}
+                      onClick={() => handleReadBook(book)}
                     >
                       <Icon name="BookOpen" size={18} className="mr-2" />
                       Читать
@@ -1683,7 +1706,7 @@ const Index = () => {
                       <p className="text-sm text-muted-foreground mb-4">{book.description}</p>
                       <Button
                         className="w-full"
-                        onClick={() => setSelectedBook(book)}
+                        onClick={() => handleReadBook(book)}
                       >
                         <Icon name="BookOpen" size={18} className="mr-2" />
                         Читать
@@ -1727,7 +1750,7 @@ const Index = () => {
                         <p className="text-sm text-muted-foreground mb-4">{book.description}</p>
                         <Button
                           className="w-full"
-                          onClick={() => setSelectedBook(book)}
+                          onClick={() => handleReadBook(book)}
                         >
                           <Icon name="BookOpen" size={18} className="mr-2" />
                           Читать
@@ -1760,15 +1783,17 @@ const Index = () => {
             <CardContent>
               <div className="prose prose-lg max-w-none">
                 <p className="text-muted-foreground mb-6">{selectedBook.description}</p>
-                <div className="bg-muted/30 p-6 rounded-lg border-l-4 border-primary">
-                  <p className="font-merriweather text-lg leading-relaxed">
-                    Здесь будет отображаться полный текст произведения "{selectedBook.title}". 
-                    В следующей версии мы добавим интеграцию с ChatGPT для поиска и отображения текстов произведений.
-                  </p>
-                  <p className="font-merriweather text-lg leading-relaxed mt-4 text-muted-foreground italic">
-                    ChatGPT сможет найти нужное произведение в базе данных и вывести его содержимое на экран,
-                    сохраняя оригинальное форматирование и структуру текста.
-                  </p>
+                <div className="bg-muted/30 p-6 rounded-lg border-l-4 border-primary max-h-[600px] overflow-y-auto">
+                  {loadingText ? (
+                    <div className="flex items-center justify-center py-8">
+                      <Icon name="Loader2" size={32} className="animate-spin text-primary" />
+                      <span className="ml-3 text-muted-foreground">Загрузка текста...</span>
+                    </div>
+                  ) : (
+                    <p className="font-merriweather text-lg leading-relaxed whitespace-pre-wrap">
+                      {bookText || 'Загрузка...'}
+                    </p>
+                  )}
                 </div>
               </div>
             </CardContent>
