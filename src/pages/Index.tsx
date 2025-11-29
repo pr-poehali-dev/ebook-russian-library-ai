@@ -14,6 +14,11 @@ interface Book {
   genre: string;
   description: string;
   rating: number;
+  quiz?: {
+    question: string;
+    options: string[];
+    correctAnswer: number;
+  };
 }
 
 const sampleBooks: Book[] = [
@@ -1435,6 +1440,9 @@ const Index = () => {
   const [selectedAuthor, setSelectedAuthor] = useState('Все авторы');
   const [favorites, setFavorites] = useState<number[]>([]);
   const [selectedBook, setSelectedBook] = useState<Book | null>(null);
+  const [quizBook, setQuizBook] = useState<Book | null>(null);
+  const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
+  const [showResult, setShowResult] = useState(false);
 
   const filteredBooks = sampleBooks.filter((book) => {
     const matchesSearch =
@@ -1462,6 +1470,17 @@ const Index = () => {
   };
 
   const recommendations = getRecommendations();
+
+  const handleQuizAnswer = (answerIndex: number) => {
+    setSelectedAnswer(answerIndex);
+    setShowResult(true);
+  };
+
+  const closeQuiz = () => {
+    setQuizBook(null);
+    setSelectedAnswer(null);
+    setShowResult(false);
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted/30">
