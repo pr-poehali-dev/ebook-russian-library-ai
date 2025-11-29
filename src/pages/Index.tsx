@@ -1055,7 +1055,7 @@ const Index = () => {
             <Icon name="Library" size={24} className="text-primary" />
             <span className="font-cormorant text-2xl font-bold text-primary">Библиотека</span>
           </div>
-          <p>Русская классическая литература • Цифровая библиотека • 2025</p>
+          <p>Цифровая библиотека • MTG • 2025</p>
         </div>
       </footer>
     </div>
